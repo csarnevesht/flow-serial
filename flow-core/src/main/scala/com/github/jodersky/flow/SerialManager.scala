@@ -2,6 +2,7 @@ package com.github.jodersky.flow
 
 import java.nio.ByteBuffer
 
+import akka.util.ByteString
 import com.github.jodersky.flow.internal.SerialConnection
 
 /**
@@ -18,8 +19,6 @@ class SerialManager  {
   val writeBuffer = ByteBuffer.allocateDirect(bufferSize)
   private val builder = new StringBuilder()
 
-
-
   def open(port: String = port, settings: SerialSettings = settings): SerialConnection = synchronized {
     SerialConnection.open(port, settings)
   }
@@ -29,14 +28,12 @@ class SerialManager  {
   }
 
   def sendRequest(connection: SerialConnection, input: String) = {
-    //    val data = ByteString((input+System.lineSeparator()).getBytes())
     writeBuffer.clear()
     writeBuffer.put((input+System.lineSeparator()).getBytes())
-    //    data.copyToBuffer(writeBuffer)
     val sent = connection.write(writeBuffer)
   }
 
-  def getResponse(serial: SerialConnection) = {
+  def getResponse(serial: SerialConnection) : String = {
     val endOfDataToken = ">"
     var stop = false
     while (!serial.isClosed && !stop) {
@@ -44,10 +41,11 @@ class SerialManager  {
         readBuffer.clear()
         val length = serial.read(readBuffer)
         readBuffer.limit(length)
-        val data = readBuffer.toString
-        builder.append(readBuffer.toString)
-        //        val data = ByteString.fromByteBuffer(readBuffer)
-        if(data.contains(endOfDataToken) ) {
+
+        val data = ByteString.fromByteBuffer(readBuffer)
+        val str = new String(data.toArray, "UTF-8")
+        builder.append(new String(data.toArray, "UTF-8"))
+        if(str.contains(endOfDataToken) ) {
           stop = true
         }
       } catch {
@@ -56,10 +54,12 @@ class SerialManager  {
         case ex: PortInterruptedException => {}
 
         case ex: Exception => {
+          println("exception " + ex.toString)
           stop = true
         }
       }
     }
+    builder.toString
   }
 
 }
