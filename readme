@@ -1,6 +1,6 @@
 sbt flow-core/packageBin
 sbt flow-core/publishLocal
-flow-native/src
+cd flow-native/src
 cmake .
 cd ../..
 sbt flow-native/packageBin
