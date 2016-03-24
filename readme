@@ -1,5 +1,12 @@
 sbt flow-core/packageBin
 sbt flow-core/publishLocal
+
+
+
+######################################
+# the following is not necessary since we are
+# using the library from the repository
+######################################
 cd flow-native/src
 cmake .
 cd ../..
