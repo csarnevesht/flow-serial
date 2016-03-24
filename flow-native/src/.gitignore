@@ -1,0 +1,12 @@
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Binary files
+*.o
+*.so*
+*.dylib
+*.a
+*~

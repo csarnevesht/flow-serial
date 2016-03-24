@@ -1,0 +1,5 @@
+sbt flow-core/packageBin
+flow-native/src
+cmake .
+cd ../..
+sbt flow-native/packageBin
